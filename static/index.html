@@ -1,57 +1,128 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>AetherMind AI Platform</title>
 
   <link rel="stylesheet" href="style.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+  >
+
 </head>
 
 <body>
 
-<!-- AUTH SCREEN -->
+<!-- AUTH -->
+
 <div class="auth-screen" id="authScreen">
 
   <div class="auth-card">
 
     <div class="auth-logo">
-      <div class="logo-circle">A</div>
+
+      <div class="logo-circle">
+        A
+      </div>
+
       <h1>AetherMind AI</h1>
-      <p>Enterprise Agentic RAG Platform</p>
+
+      <p>
+        Enterprise Agentic RAG Platform
+      </p>
+
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('login')">Login</button>
-      <button class="tab" onclick="switchTab('register')">Register</button>
+
+      <button
+        class="tab active"
+        onclick="switchTab('login')"
+      >
+        Login
+      </button>
+
+      <button
+        class="tab"
+        onclick="switchTab('register')"
+      >
+        Register
+      </button>
+
     </div>
 
     <!-- LOGIN -->
+
     <div id="loginForm">
 
-      <input type="text" id="loginUsername" placeholder="Username">
+      <input
+        type="text"
+        id="loginUsername"
+        placeholder="Username"
+      >
 
-      <input type="password" id="loginPassword" placeholder="Password">
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Password"
+      >
 
-      <button class="primary-btn" onclick="login()">
+      <button
+        class="primary-btn"
+        onclick="login()"
+      >
         Sign In
       </button>
 
     </div>
 
     <!-- REGISTER -->
-    <div id="registerForm" style="display:none;">
 
-      <input type="text" id="regUsername" placeholder="Username">
+    <div
+      id="registerForm"
+      style="display:none;"
+    >
 
-      <input type="email" id="regEmail" placeholder="Email">
+      <input
+        type="text"
+        id="regUsername"
+        placeholder="Username"
+      >
 
-      <input type="password" id="regPassword" placeholder="Password">
+      <input
+        type="email"
+        id="regEmail"
+        placeholder="Email"
+      >
 
-      <button class="primary-btn" onclick="registerUser()">
+      <input
+        type="password"
+        id="regPassword"
+        placeholder="Password"
+      >
+
+      <button
+        class="primary-btn"
+        onclick="registerUser()"
+      >
         Create Account
       </button>
 
@@ -61,44 +132,131 @@
 
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
+
 <div class="app hidden" id="app">
 
   <!-- SIDEBAR -->
+
   <aside class="sidebar">
 
-    <div class="sidebar-top">
+    <!-- PROFILE -->
 
-      <div class="brand">
+    <div class="profile-card">
 
-        <div class="brand-icon">A</div>
+      <div
+        class="profile-avatar"
+        id="profileAvatar"
+      >
+        A
+      </div>
 
-        <div>
-          <h2>AetherMind</h2>
-          <span>AI Workspace</span>
-        </div>
+      <div class="profile-info">
+
+        <h3 id="sidebarUsername">
+          User
+        </h3>
+
+        <p id="sidebarEmail">
+          user@email.com
+        </p>
 
       </div>
 
-      <button class="new-chat-btn">
-        + New Chat
-      </button>
+    </div>
+
+    <!-- BRAND -->
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        A
+      </div>
+
+      <div>
+
+        <h2>
+          AetherMind
+        </h2>
+
+        <span>
+          AI Workspace
+        </span>
+
+      </div>
 
     </div>
 
-    <div class="sidebar-section">
+    <!-- NEW CHAT -->
 
-      <p class="section-title">Documents</p>
+    <button
+      class="new-chat-btn"
+      onclick="startNewChat()"
+    >
+      + New Chat
+    </button>
+
+    <!-- SEARCH -->
+
+    <div class="search-wrapper">
+
+      <input
+        type="text"
+        id="historySearch"
+        placeholder="Search chats..."
+      >
+
+    </div>
+
+    <!-- RECENT -->
+
+    <div class="recent-wrapper">
+
+      <div class="recent-header">
+
+        <h3>
+          Recent Chats
+        </h3>
+
+      </div>
+
+      <div id="recentChats">
+
+      </div>
+
+    </div>
+
+    <!-- DOCUMENTS -->
+
+    <div class="documents-wrapper">
+
+      <div class="documents-header">
+
+        <h3>
+          Documents
+        </h3>
+
+      </div>
 
       <label class="upload-box">
 
-        <input type="file" id="fileInput" multiple hidden>
+        <input
+          type="file"
+          id="fileInput"
+          multiple
+          hidden
+          accept=".pdf,.doc,.docx,.txt,.csv,.zip"
+        >
 
         <div class="upload-content">
 
-          <h4>Upload Files</h4>
+          <h4>
+            Upload Files
+          </h4>
 
-          <span>PDF · DOCX · TXT</span>
+          <span>
+            PDF · DOCX · TXT · ZIP
+          </span>
 
         </div>
 
@@ -106,26 +264,28 @@
 
       <div id="fileList"></div>
 
-    </div>
-
-    <div class="sidebar-section">
-
-      <p class="section-title">Ingest URLs</p>
-
       <textarea
         id="urlInput"
         placeholder="https://example.com"
       ></textarea>
 
-      <button class="secondary-btn" onclick="ingestUrls()">
+      <button
+        class="secondary-btn"
+        onclick="ingestUrls()"
+      >
         Ingest URLs
       </button>
 
     </div>
 
+    <!-- FOOTER -->
+
     <div class="sidebar-bottom">
 
-      <button class="danger-btn" onclick="logout()">
+      <button
+        class="danger-btn"
+        onclick="logout()"
+      >
         Logout
       </button>
 
@@ -134,14 +294,16 @@
   </aside>
 
   <!-- MAIN -->
+
   <main class="main">
 
-    <!-- HEADER -->
     <header class="topbar">
 
       <div>
 
-        <h1>Enterprise AI Workspace</h1>
+        <h1>
+          Enterprise AI Workspace
+        </h1>
 
         <p>
           FastAPI + LangChain + ChromaDB + LLaMA-3
@@ -160,7 +322,11 @@
     </header>
 
     <!-- CHAT -->
-    <div class="chat-container" id="chatContainer">
+
+    <div
+      class="chat-container"
+      id="chatContainer"
+    >
 
       <div class="hero">
 
@@ -168,7 +334,9 @@
           ✦
         </div>
 
-        <h1>How can I help you today?</h1>
+        <h1>
+          How can I help you today?
+        </h1>
 
         <p>
           Upload documents and interact with your AI knowledge base.
@@ -179,6 +347,7 @@
     </div>
 
     <!-- INPUT -->
+
     <div class="input-area">
 
       <div class="input-wrapper">
@@ -188,7 +357,10 @@
           placeholder="Ask anything..."
         ></textarea>
 
-        <button id="sendBtn" onclick="sendMessage()">
+        <button
+          id="sendBtn"
+          onclick="sendMessage()"
+        >
           ➜
         </button>
 
@@ -200,6 +372,12 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
 <script src="app.js"></script>
+
 </body>
 </html>
+

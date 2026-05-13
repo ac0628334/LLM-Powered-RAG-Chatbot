@@ -48,17 +48,34 @@ class RAGResponse:
 
 
 def _format_docs(docs: list[Document]) -> str:
-    """Render retrieved documents into a single context string for the LLM."""
+    """
+    Clean document formatter for the LLM.
+    Removes citations, file paths, and duplicate sources.
+    """
+
     if not docs:
         return "No documents retrieved."
+
     blocks = []
-    for i, doc in enumerate(docs, start=1):
+    seen_sources = set()
+
+    for doc in docs:
+
         meta = doc.metadata or {}
+
         source = meta.get("source", "unknown")
-        page = f", page {meta['page'] + 1}" if isinstance(meta.get("page"), int) else ""
+
+        # Skip duplicate documents
+        if source in seen_sources:
+            continue
+
+        seen_sources.add(source)
+
+        # Add ONLY clean text content
         blocks.append(
-            f"[Doc {i} | source: {source}{page}]\n{doc.page_content.strip()}"
+            doc.page_content.strip()
         )
+
     return "\n\n".join(blocks)
 
 

@@ -25,9 +25,19 @@ document.getElementById("fileList");
 let token =
 localStorage.getItem("token");
 
+/* CHAT STORAGE */
+
+let chatSessions =
+JSON.parse(
+  localStorage.getItem("chatSessions")
+) || [];
+
+let currentChatId = null;
+
 /* AUTO LOGIN */
 
 if(token){
+
   showApp();
 }
 
@@ -35,29 +45,39 @@ if(token){
 
 function switchTab(tab){
 
-  document.querySelectorAll(".tab")
-  .forEach(t => t.classList.remove("active"));
+  document
+  .querySelectorAll(".tab")
+  .forEach(tabBtn=>{
+
+    tabBtn.classList.remove("active");
+  });
 
   if(tab === "login"){
 
-    document.querySelectorAll(".tab")[0]
+    document
+    .querySelectorAll(".tab")[0]
     .classList.add("active");
 
-    document.getElementById("loginForm")
+    document
+    .getElementById("loginForm")
     .style.display = "block";
 
-    document.getElementById("registerForm")
+    document
+    .getElementById("registerForm")
     .style.display = "none";
 
   }else{
 
-    document.querySelectorAll(".tab")[1]
+    document
+    .querySelectorAll(".tab")[1]
     .classList.add("active");
 
-    document.getElementById("loginForm")
+    document
+    .getElementById("loginForm")
     .style.display = "none";
 
-    document.getElementById("registerForm")
+    document
+    .getElementById("registerForm")
     .style.display = "block";
   }
 }
@@ -66,16 +86,22 @@ function switchTab(tab){
 
 async function registerUser(){
 
-  const username =
-  document.getElementById("regUsername").value;
-
-  const email =
-  document.getElementById("regEmail").value;
-
-  const password =
-  document.getElementById("regPassword").value;
-
   try{
+
+    const username =
+    document.getElementById(
+      "regUsername"
+    ).value;
+
+    const email =
+    document.getElementById(
+      "regEmail"
+    ).value;
+
+    const password =
+    document.getElementById(
+      "regPassword"
+    ).value;
 
     const response =
     await fetch(`${API}/register`,{
@@ -83,7 +109,8 @@ async function registerUser(){
       method:"POST",
 
       headers:{
-        "Content-Type":"application/json"
+        "Content-Type":
+        "application/json"
       },
 
       body:JSON.stringify({
@@ -93,29 +120,31 @@ async function registerUser(){
       })
     });
 
-    const data =
-    await response.json();
-
     if(response.ok){
 
       alert(
-        "Registration successful!"
+        "Registration successful"
       );
 
       switchTab("login");
 
     }else{
 
+      const error =
+      await response.json();
+
       alert(
-        data.detail ||
+        error.detail ||
         "Registration failed"
       );
     }
 
   }catch(error){
 
+    console.error(error);
+
     alert(
-      "Backend connection failed."
+      "Backend connection failed"
     );
   }
 }
@@ -124,26 +153,39 @@ async function registerUser(){
 
 async function login(){
 
-  const username =
-  document.getElementById("loginUsername").value;
-
-  const password =
-  document.getElementById("loginPassword").value;
-
-  const formData =
-  new FormData();
-
-  formData.append(
-    "username",
-    username
-  );
-
-  formData.append(
-    "password",
-    password
-  );
-
   try{
+
+    const username =
+    document.getElementById(
+      "loginUsername"
+    ).value;
+
+    const password =
+    document.getElementById(
+      "loginPassword"
+    ).value;
+
+    if(!username || !password){
+
+      alert(
+        "Please enter username and password"
+      );
+
+      return;
+    }
+
+    const formData =
+    new FormData();
+
+    formData.append(
+      "username",
+      username
+    );
+
+    formData.append(
+      "password",
+      password
+    );
 
     const response =
     await fetch(`${API}/login`,{
@@ -153,32 +195,65 @@ async function login(){
       body:formData
     });
 
+    console.log(
+      "LOGIN STATUS:",
+      response.status
+    );
+
     const data =
     await response.json();
 
-    if(data.access_token){
+    console.log(
+      "LOGIN RESPONSE:",
+      data
+    );
+
+    const accessToken =
+      data.access_token ||
+      data.token;
+
+    if(accessToken){
+
+      token = accessToken;
 
       localStorage.setItem(
         "token",
-        data.access_token
+        accessToken
       );
 
-      token =
-      data.access_token;
+      // PROFILE
+      document
+      .getElementById(
+        "sidebarUsername"
+      )
+      .innerText = username;
+
+      document
+      .getElementById(
+        "profileAvatar"
+      )
+      .innerText =
+      username
+      .charAt(0)
+      .toUpperCase();
 
       showApp();
 
     }else{
 
       alert(
-        "Invalid credentials"
+        "Login failed"
       );
+
+      console.error(data);
     }
 
   }catch(error){
 
+    console.error(error);
+
     alert(
-      "Unable to connect to backend."
+      "Unable to connect to backend"
     );
   }
 }
@@ -187,55 +262,284 @@ async function login(){
 
 function showApp(){
 
-  authScreen.classList.add("hidden");
+  authScreen.style.display =
+  "none";
 
-  app.classList.remove("hidden");
+  app.style.display =
+  "flex";
 
-  loadHistory();
+  renderRecentChats();
 }
 
 /* LOGOUT */
 
 function logout(){
 
-  localStorage.removeItem("token");
+  localStorage.removeItem(
+    "token"
+  );
 
   location.reload();
 }
+
+/* NEW CHAT */
+
+function startNewChat(){
+
+  currentChatId =
+  Date.now();
+
+  const newChat = {
+
+    id:currentChatId,
+
+    title:"New Chat",
+
+    messages:[],
+
+    createdAt:
+    new Date()
+    .toLocaleString()
+  };
+
+  chatSessions.unshift(
+    newChat
+  );
+
+  localStorage.setItem(
+    "chatSessions",
+    JSON.stringify(chatSessions)
+  );
+
+  renderRecentChats();
+
+  chatContainer.innerHTML = `
+
+    <div class="hero">
+
+      <div class="hero-icon">
+        ✦
+      </div>
+
+      <h1>
+        How can I help you today?
+      </h1>
+
+      <p>
+        Upload documents and interact with your AI knowledge base.
+      </p>
+
+    </div>
+  `;
+}
+
+/* SAVE SESSION */
+
+function saveMessageToSession(
+  question,
+  answer
+){
+
+  if(!currentChatId){
+
+    startNewChat();
+  }
+
+  const chat =
+  chatSessions.find(
+    c => c.id === currentChatId
+  );
+
+  if(!chat) return;
+
+  if(chat.title === "New Chat"){
+
+    chat.title =
+    question.substring(0,40);
+  }
+
+  chat.messages.push({
+
+    question,
+    answer
+  });
+
+  localStorage.setItem(
+    "chatSessions",
+    JSON.stringify(chatSessions)
+  );
+
+  renderRecentChats();
+}
+
+/* RENDER RECENT */
+
+function renderRecentChats(){
+
+  const container =
+  document.getElementById(
+    "recentChats"
+  );
+
+  container.innerHTML = "";
+
+  chatSessions.forEach(chat=>{
+
+    const item =
+    document.createElement("div");
+
+    item.classList.add(
+      "chat-folder"
+    );
+
+    item.innerHTML = `
+
+      <div class="chat-folder-title">
+        ${chat.title}
+      </div>
+
+      <div class="chat-folder-time">
+        ${chat.createdAt}
+      </div>
+    `;
+
+    item.onclick = ()=>{
+
+      openChat(chat.id);
+    };
+
+    container.appendChild(item);
+  });
+}
+
+/* OPEN CHAT */
+
+function openChat(chatId){
+
+  currentChatId = chatId;
+
+  const chat =
+  chatSessions.find(
+    c => c.id === chatId
+  );
+
+  if(!chat) return;
+
+  chatContainer.innerHTML = "";
+
+  chat.messages.forEach(msg=>{
+
+    addMessage(
+      msg.question,
+      "user"
+    );
+
+    addMessage(
+      msg.answer,
+      "bot"
+    );
+  });
+}
+
+/* SEARCH */
+
+document
+.getElementById("historySearch")
+.addEventListener(
+  "input",
+  function(){
+
+    const keyword =
+    this.value.toLowerCase();
+
+    const filtered =
+    chatSessions.filter(chat=>
+
+      chat.title
+      .toLowerCase()
+      .includes(keyword)
+
+      ||
+
+      chat.messages.some(m=>
+
+        m.question
+        .toLowerCase()
+        .includes(keyword)
+
+        ||
+
+        m.answer
+        .toLowerCase()
+        .includes(keyword)
+      )
+    );
+
+    const container =
+    document.getElementById(
+      "recentChats"
+    );
+
+    container.innerHTML = "";
+
+    filtered.forEach(chat=>{
+
+      const item =
+      document.createElement("div");
+
+      item.classList.add(
+        "chat-folder"
+      );
+
+      item.innerHTML = `
+
+        <div class="chat-folder-title">
+          ${chat.title}
+        </div>
+
+        <div class="chat-folder-time">
+          Keyword matched
+        </div>
+      `;
+
+      item.onclick = ()=>{
+
+        openChat(chat.id);
+      };
+
+      container.appendChild(item);
+    });
+  }
+);
 
 /* SEND MESSAGE */
 
 async function sendMessage(){
 
-  const text =
-  messageInput.value.trim();
+  try{
 
-  if(!text) return;
+    const text =
+    messageInput.value.trim();
 
-  // CHECK LOGIN
-  const token =
-  localStorage.getItem("token");
+    if(!text) return;
 
-  if(!token){
+    if(!token){
+
+      alert(
+        "Please login first"
+      );
+
+      return;
+    }
 
     addMessage(
-      "Please login first.",
-      "bot"
+      text,
+      "user"
     );
 
-    return;
-  }
+    messageInput.value = "";
 
-  // USER MESSAGE
-  addMessage(text,"user");
-
-  // CLEAR INPUT
-  messageInput.value = "";
-
-  // SHOW TYPING
-  showTyping();
-
-  try{
+    showTyping();
 
     const response =
     await fetch(`${API}/chat`,{
@@ -243,40 +547,30 @@ async function sendMessage(){
       method:"POST",
 
       headers:{
-        "Content-Type":"application/json",
+        "Content-Type":
+        "application/json",
+
         "Authorization":
         `Bearer ${token}`
       },
 
       body:JSON.stringify({
+
         question:text,
         history:[]
       })
     });
 
-    // UNAUTHORIZED
     if(response.status === 401){
 
       removeTyping();
 
-      addMessage(
-        "Session expired. Please login again.",
-        "bot"
+      alert(
+        "Session expired. Login again."
       );
 
-      localStorage.removeItem("token");
-
-      return;
-    }
-
-    // OTHER ERRORS
-    if(!response.ok){
-
-      removeTyping();
-
-      addMessage(
-        "Backend request failed.",
-        "bot"
+      localStorage.removeItem(
+        "token"
       );
 
       return;
@@ -287,49 +581,76 @@ async function sendMessage(){
 
     removeTyping();
 
-    // ONLY ANSWER
     const answer =
-    data.answer ||
-    "No response generated.";
+      data.answer ||
+      "No response generated";
 
-    addMessage(answer,"bot");
+    addMessage(
+      answer,
+      "bot"
+    );
+
+    saveMessageToSession(
+      text,
+      answer
+    );
 
   }catch(error){
+
+    console.error(error);
 
     removeTyping();
 
     addMessage(
-      "Unable to connect to AI server.",
+      "Backend connection failed",
       "bot"
     );
-
-    console.error(error);
   }
 }
 
 /* ADD MESSAGE */
 
-function addMessage(text,sender){
+function addMessage(
+  text,
+  sender
+){
 
   const message =
   document.createElement("div");
 
-  message.classList.add("message");
-  message.classList.add(sender);
+  message.classList.add(
+    "message"
+  );
+
+  message.classList.add(
+    sender
+  );
 
   message.innerHTML = `
+
     <div class="message-box">
-      ${text}
+      ${marked.parse(text)}
     </div>
   `;
 
-  chatContainer.appendChild(message);
+  chatContainer.appendChild(
+    message
+  );
+
+  document
+  .querySelectorAll("pre code")
+  .forEach(block=>{
+
+    hljs.highlightElement(
+      block
+    );
+  });
 
   chatContainer.scrollTop =
   chatContainer.scrollHeight;
 }
 
-/* SHOW TYPING */
+/* TYPING */
 
 function showTyping(){
 
@@ -338,37 +659,47 @@ function showTyping(){
 
   typing.id = "typing";
 
-  typing.classList.add("message");
-  typing.classList.add("bot");
+  typing.classList.add(
+    "message"
+  );
+
+  typing.classList.add(
+    "bot"
+  );
 
   typing.innerHTML = `
+
     <div class="message-box">
       <span class="spinner"></span>
       Thinking...
     </div>
   `;
 
-  chatContainer.appendChild(typing);
+  chatContainer.appendChild(
+    typing
+  );
 
   chatContainer.scrollTop =
   chatContainer.scrollHeight;
 }
 
-/* REMOVE TYPING */
-
 function removeTyping(){
 
   const typing =
-  document.getElementById("typing");
+  document.getElementById(
+    "typing"
+  );
 
   if(typing){
+
     typing.remove();
   }
 }
 
 /* ENTER KEY */
 
-messageInput.addEventListener(
+messageInput
+.addEventListener(
   "keypress",
   function(e){
 
@@ -390,49 +721,42 @@ fileInput.addEventListener(
   "change",
   async()=>{
 
-    const files =
-    fileInput.files;
-
-    if(files.length === 0){
-      return;
-    }
-
-    const token =
-    localStorage.getItem("token");
-
-    if(!token){
-
-      alert(
-        "Please login first."
-      );
-
-      return;
-    }
-
-    const formData =
-    new FormData();
-
-    fileList.innerHTML = "";
-
-    for(let file of files){
-
-      formData.append(
-        "files",
-        file
-      );
-
-      const item =
-      document.createElement("div");
-
-      item.classList.add("file-item");
-
-      item.innerText =
-      `📄 ${file.name}`;
-
-      fileList.appendChild(item);
-    }
-
     try{
+
+      const files =
+      fileInput.files;
+
+      if(files.length === 0){
+        return;
+      }
+
+      const formData =
+      new FormData();
+
+      fileList.innerHTML = "";
+
+      for(let file of files){
+
+        formData.append(
+          "files",
+          file
+        );
+
+        const item =
+        document.createElement("div");
+
+        item.classList.add(
+          "file-item"
+        );
+
+        item.innerHTML = `
+          📄 ${file.name}
+        `;
+
+        fileList.appendChild(
+          item
+        );
+      }
 
       const response =
       await fetch(
@@ -453,57 +777,50 @@ fileInput.addEventListener(
       if(response.ok){
 
         alert(
-          "Documents ingested successfully!"
+          "Files uploaded successfully"
         );
 
       }else{
 
         alert(
-          "Document ingestion failed."
+          "File upload failed"
         );
       }
 
     }catch(error){
 
+      console.error(error);
+
       alert(
-        "Backend connection failed."
+        "Backend connection failed"
       );
     }
   }
 );
 
-/* INGEST URLS */
+/* URL INGESTION */
 
 async function ingestUrls(){
 
-  const token =
-  localStorage.getItem("token");
-
-  if(!token){
-
-    alert(
-      "Please login first."
-    );
-
-    return;
-  }
-
-  const urls =
-  document.getElementById("urlInput")
-  .value
-  .split("\n")
-  .filter(Boolean);
-
-  if(urls.length === 0){
-
-    alert(
-      "Enter at least one URL."
-    );
-
-    return;
-  }
-
   try{
+
+    const urls =
+    document
+    .getElementById(
+      "urlInput"
+    )
+    .value
+    .split("\n")
+    .filter(Boolean);
+
+    if(urls.length === 0){
+
+      alert(
+        "Please enter URL"
+      );
+
+      return;
+    }
 
     const response =
     await fetch(
@@ -529,68 +846,22 @@ async function ingestUrls(){
     if(response.ok){
 
       alert(
-        "URLs ingested successfully!"
+        "URLs ingested successfully"
       );
 
     }else{
 
       alert(
-        "URL ingestion failed."
+        "URL ingestion failed"
       );
     }
 
   }catch(error){
+
+    console.error(error);
 
     alert(
-      "Backend connection failed."
-    );
-  }
-}
-
-/* LOAD HISTORY */
-
-async function loadHistory(){
-
-  const token =
-  localStorage.getItem("token");
-
-  if(!token) return;
-
-  try{
-
-    const response =
-    await fetch(`${API}/history`,{
-
-      headers:{
-        "Authorization":
-        `Bearer ${token}`
-      }
-    });
-
-    if(!response.ok){
-      return;
-    }
-
-    const history =
-    await response.json();
-
-    history.forEach(chat=>{
-
-      addMessage(
-        chat.question,
-        "user"
-      );
-
-      addMessage(
-        chat.answer,
-        "bot"
-      );
-    });
-
-  }catch(error){
-
-    console.error(
-      "Failed to load history"
+      "Backend connection failed"
     );
   }
 }

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AetherMind AI Platform</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <div class="logo-circle">A</div>
+      <h1>AetherMind AI</h1>
+      <p>Enterprise Agentic RAG Platform</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Login</button>
+      <button class="tab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+
+      <input type="text" id="loginUsername" placeholder="Username">
+
+      <input type="password" id="loginPassword" placeholder="Password">
+
+      <button class="primary-btn" onclick="login()">
+        Sign In
+      </button>
+
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm" style="display:none;">
+
+      <input type="text" id="regUsername" placeholder="Username">
+
+      <input type="email" id="regEmail" placeholder="Email">
+
+      <input type="password" id="regPassword" placeholder="Password">
+
+      <button class="primary-btn" onclick="registerUser()">
+        Create Account
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MAIN APP -->
+<div class="app hidden" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-top">
+
+      <div class="brand">
+
+        <div class="brand-icon">A</div>
+
+        <div>
+          <h2>AetherMind</h2>
+          <span>AI Workspace</span>
+        </div>
+
+      </div>
+
+      <button class="new-chat-btn">
+        + New Chat
+      </button>
+
+    </div>
+
+    <div class="sidebar-section">
+
+      <p class="section-title">Documents</p>
+
+      <label class="upload-box">
+
+        <input type="file" id="fileInput" multiple hidden>
+
+        <div class="upload-content">
+
+          <h4>Upload Files</h4>
+
+          <span>PDF · DOCX · TXT</span>
+
+        </div>
+
+      </label>
+
+      <div id="fileList"></div>
+
+    </div>
+
+    <div class="sidebar-section">
+
+      <p class="section-title">Ingest URLs</p>
+
+      <textarea
+        id="urlInput"
+        placeholder="https://example.com"
+      ></textarea>
+
+      <button class="secondary-btn" onclick="ingestUrls()">
+        Ingest URLs
+      </button>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+      <button class="danger-btn" onclick="logout()">
+        Logout
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="topbar">
+
+      <div>
+
+        <h1>Enterprise AI Workspace</h1>
+
+        <p>
+          FastAPI + LangChain + ChromaDB + LLaMA-3
+        </p>
+
+      </div>
+
+      <div class="status">
+
+        <span class="status-dot"></span>
+
+        AI Online
+
+      </div>
+
+    </header>
+
+    <!-- CHAT -->
+    <div class="chat-container" id="chatContainer">
+
+      <div class="hero">
+
+        <div class="hero-icon">
+          ✦
+        </div>
+
+        <h1>How can I help you today?</h1>
+
+        <p>
+          Upload documents and interact with your AI knowledge base.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-area">
+
+      <div class="input-wrapper">
+
+        <textarea
+          id="messageInput"
+          placeholder="Ask anything..."
+        ></textarea>
+
+        <button id="sendBtn" onclick="sendMessage()">
+          ➜
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

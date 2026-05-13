@@ -307,12 +307,12 @@ or run using VS Code Live Server.
 ```bash
 streamlit run app.py
 ```
-
+![alt text](<Screenshot 2026-05-13 183112-1.png>)
 Streamlit:
 ```text
 http://localhost:8501
 ---
-  ![alt text](<Screenshot 2026-05-13 183112.png>)
+  
 
 
 # 🧪 Example Workflow

@@ -1,250 +1,461 @@
-# LLM-Powered RAG Chatbot
+# 🚀 AetherMind AI — Enterprise LLM-Powered RAG Chatbot
 
-A production-style **Retrieval-Augmented Generation (RAG)** chatbot that lets
-you chat with your own documents (PDF, TXT, MD, DOCX) and web pages. Built
-with **LangChain**, **ChromaDB**, **HuggingFace sentence-transformers**, and
-ships with **two interchangeable frontends** - a **Streamlit** UI for humans
-and a **FastAPI** REST backend (with auto-generated Swagger docs) for
-integrations. Pluggable LLM backends (Groq, OpenAI, or fully local Ollama).
+An enterprise-grade **Retrieval-Augmented Generation (RAG)** AI platform that enables users to interact with private documents and web knowledge through a modern conversational AI workspace.
 
+Built using **FastAPI, LangChain, ChromaDB, Groq LLaMA-3, sentence-transformers, Streamlit, and a custom HTML/CSS/JavaScript frontend**, the platform supports semantic document retrieval, multi-document ingestion, conversational memory, and grounded AI responses.
+
+The project provides:
+- A production-style enterprise AI workspace UI
+- A Streamlit-based AI demo interface
+- A FastAPI REST backend with Swagger documentation
+- A modular conversational RAG pipeline
+
+Designed to simulate real-world enterprise AI assistants and modern GenAI knowledge systems.
 > Designed as a portfolio : small, well-structured, easy to
 > demo, and uses only free tools out-of-the-box.
 
 ---
 
-## Features
+## ✨ Features
 
-- **Conversational, multi-turn RAG** with history-aware question rewriting.
-- **Pluggable LLM provider** - switch between Groq (free & fast), OpenAI, or
-  Ollama (fully local) via a single env var.
-- **Local embeddings** with `sentence-transformers/all-MiniLM-L6-v2` - no
-  embeddings API key required.
-- **Persistent vector store** powered by ChromaDB.
-- **Multiple document types**: PDF, TXT, Markdown, DOCX, and arbitrary URLs.
-- **Strict, citation-aware system prompt** that refuses to answer when the
-  context is insufficient (anti-hallucination guardrail).
-- **Cited sources** displayed alongside every answer in the UI.
-- **Three independent entry points** sharing the same core: a **Streamlit UI**,
-  a **FastAPI REST backend** (with auto-generated Swagger docs at `/docs`),
-  and a **CLI** (`python cli.py chat`).
-- Fully type-hinted, modular code with **16 unit / integration tests** (`pytest`).
+### 🤖 Conversational AI & RAG
+- Conversational multi-turn RAG pipeline
+- History-aware question rewriting
+- Context-grounded AI responses
+- Semantic similarity retrieval
+- Citation-aware answer generation
+- Anti-hallucination guardrails
+- Conversational memory support
 
 ---
 
-## Architecture
+### 🧠 LLM & Embeddings
+- Pluggable LLM providers:
+  - Groq (fast & free)
+  - OpenAI
+  - Ollama (fully local)
+- Local embeddings using:
+  `sentence-transformers/all-MiniLM-L6-v2`
+- No embeddings API key required
 
+---
+
+### 📂 Document & URL Ingestion
+Supports:
+- PDF
+- DOCX
+- TXT
+- Markdown
+- ZIP
+- Web URLs
+
+Features:
+- Multi-document ingestion
+- Persistent vector storage
+- ChromaDB-powered semantic search
+- Intelligent text chunking
+
+---
+
+### 💻 Enterprise AI Workspace UI
+#### Custom Frontend (HTML/CSS/JavaScript)
+- ChatGPT-style sidebar
+- Recent chat history
+- Chat search functionality
+- Session-based conversations
+- Modern dark theme dashboard
+- File upload & ingestion workspace
+- Interactive AI assistant interface
+- Markdown rendering
+- Syntax-highlighted code blocks
+
+#### Streamlit AI Demo UI
+- Rapid AI prototyping interface
+- Lightweight testing environment
+- Quick deployment support
+
+---
+
+### 🔐 Authentication & Security
+- JWT-based authentication
+- Protected API routes
+- Secure session handling
+- User login & registration system
+
+---
+
+### ⚡ Backend & APIs
+- FastAPI REST backend
+- Auto-generated Swagger documentation (`/docs`)
+- Reusable modular RAG architecture
+- CLI support (`python cli.py chat`)
+- Fully type-hinted codebase
+
+---
+
+### 🧪 Testing & Reliability
+- Unit & integration tests using `pytest`
+- Modular, production-style architecture
+- Persistent ChromaDB vector database
+- Scalable ingestion pipeline
+## 🏗️ Architecture
+
+```text
+                        ┌──────────────────────────┐
+                        │   Custom Frontend UI     │
+                        │ (HTML / CSS / JavaScript)│
+                        └────────────┬─────────────┘
+                                     │
+                        ┌────────────▼─────────────┐
+                        │      Streamlit UI        │
+                        │   (AI Demo Interface)    │
+                        └────────────┬─────────────┘
+                                     │
+                                     ▼
+                    ┌────────────────────────────────┐
+                    │        FastAPI Backend         │
+                    │  REST APIs + JWT Authentication│
+                    └───────────────┬────────────────┘
+                                    │
+                                    ▼
+                    ┌────────────────────────────────┐
+                    │     Conversational RAG Chain   │
+                    │  • Question Rewriting          │
+                    │  • Context Orchestration       │
+                    │  • Conversational Memory       │
+                    └───────────────┬────────────────┘
+                                    │
+         ┌──────────────────────────┴──────────────────────────┐
+         │                                                     │
+         ▼                                                     ▼
+
+┌──────────────────────┐                        ┌──────────────────────┐
+│   Document Loaders   │                        │    User Questions    │
+│ PDF · DOCX · TXT     │                        │  Conversational Chat │
+│ Markdown · URLs      │                        └──────────┬───────────┘
+└──────────┬───────────┘                                   │
+           ▼                                               │
+
+┌──────────────────────┐                                   │
+│ Recursive Text Split │                                   │
+│ Intelligent Chunking │                                   │
+└──────────┬───────────┘                                   │
+           ▼                                               │
+
+┌──────────────────────┐                                   │
+│ Sentence Transformers│                                   │
+│ Embedding Generation │                                   │
+└──────────┬───────────┘                                   │
+           ▼                                               │
+
+┌──────────────────────┐◀──────────────────────────────────┘
+│      ChromaDB        │
+│ Persistent Vector DB │
+└──────────┬───────────┘
+           │
+           ▼
+
+┌──────────────────────────────────────┐
+│ Retriever + Semantic Similarity Search│
+│        Top-K Context Retrieval        │
+└──────────┬────────────────────────────┘
+           ▼
+
+┌──────────────────────────────────────┐
+│      Prompt Engineering Layer        │
+│ • Context Grounding                  │
+│ • Citation-aware Responses           │
+│ • Anti-hallucination Guardrails      │
+└──────────┬───────────────────────────┘
+           ▼
+
+┌──────────────────────────────────────┐
+│         LLM Inference Layer          │
+│   Groq · OpenAI · Ollama · LLaMA-3   │
+└──────────┬───────────────────────────┘
+           ▼
+
+┌──────────────────────────────────────┐
+│   Grounded AI Response + Sources     │
+└──────────────────────────────────────┘
 ```
-            +-----------------+         +-------------------+
- PDF / URL  |  Document       |         |  Recursive        |
- / TXT  ───▶|  Loaders        ├────────▶|  Text Splitter    |
-            +-----------------+         +-------------------+
-                                                 │
-                                                 ▼
-                                       +-------------------+
-                                       |  Sentence-Transf. |
-                                       |  Embeddings       |
-                                       +---------┬---------+
-                                                 ▼
-                                       +-------------------+
-                                       |  ChromaDB         |
-                                       |  (persistent)     |
-                                       +---------┬---------+
-                                                 │ top-K retrieval
-                                                 ▼
-   User question ─▶ [history-aware rewrite] ─▶ Retriever ─▶ Prompt + Context
-                                                                │
-                                                                ▼
-                                                  +--------------------------+
-                                                  |  LLM (Groq/OpenAI/Ollama)|
-                                                  +-------------┬------------+
-                                                                ▼
-                                                       Grounded answer + sources
-```
 
 ---
+## 🛠️ Tech Stack
 
-## Tech stack
+| Layer                   | Technologies                             |
+|---                      |---                                       |
+| **Frontend UI**         | HTML · CSS · JavaScript                  |
+| **AI Demo Interface**   | Streamlit                                |
+| **Backend Framework**   | FastAPI · Uvicorn                        |
+| **Authentication**      | JWT Authentication                       |
+| **RAG Orchestration**   | LangChain (LCEL)                         |
+| **LLM Providers**       | Groq · OpenAI · Ollama · LLaMA-3         |
+| **Embeddings**          | `sentence-transformers/all-MiniLM-L6-v2` |
+| **Vector Database**     | ChromaDB (persistent vector storage)     |
+| **Document Processing** | pypdf · python-docx · BeautifulSoup4     |
+| **Semantic Retrieval**  | Chroma Retriever · Similarity Search     |
+| **Prompt Engineering**  | Context-grounded prompt templates        |
+| **Configuration**       | Pydantic Settings · `.env`               |
+| **Testing**             | pytest · FastAPI TestClient              |
+| **API Documentation**   | Swagger UI · ReDoc                       |
+| **Storage**             | Chroma Persistent Storage · SQLite       |
+| **Deployment Ready**    | Docker-ready architecture                |
 
-| Layer            | Choice                                            |
-| ---------------- | ------------------------------------------------- |
-| Orchestration    | LangChain (LCEL)                                  |
-| Embeddings       | `sentence-transformers/all-MiniLM-L6-v2` (local)  |
-| Vector store     | ChromaDB (persistent on disk)                     |
-| LLMs             | Groq · OpenAI · Ollama (configurable)             |
-| Document loaders | pypdf · python-docx · BeautifulSoup4              |
-| UI               | Streamlit                                         |
-| REST backend     | FastAPI + Uvicorn (auto Swagger docs)             |
-| Config           | Pydantic Settings + `.env`                        |
-| Tests            | pytest + FastAPI TestClient                       |
 
----
+## 🚀 Quick Start
 
-## Quick start
-
-### 1. Clone & install
+### 1️⃣ Clone & Install
 
 ```bash
-git clone <your-repo-url>
-cd llm-rag-chatbot
+git clone https://github.com/ac0628334/LLM-Powered-RAG-Chatbot.git
+
+cd LLM-Powered-RAG-Chatbot
 
 python -m venv .venv
-source .venv/bin/activate          # on Windows: .venv\Scripts\activate
+
+# Windows
+.venv\Scripts\activate
+
+# Linux/macOS
+source .venv/bin/activate
 
 pip install -r requirements.txt
 ```
 
-### 2. Configure environment
+---
 
-```bash
-cp .env.example .env
+## ⚙️ Environment Setup
+
+Create a `.env` file:
+
+### Groq (Recommended)
+
+```env
+LLM_PROVIDER=groq
+GROQ_API_KEY=gsk_xxxxxxxxx
 ```
 
-Open `.env` and set **one** LLM provider:
+### OpenAI
 
-- **Groq** (recommended - free & fast). Get a key at <https://console.groq.com/keys>:
-
-  ```env
-  LLM_PROVIDER=groq
-  GROQ_API_KEY=gsk_xxx...
-  ```
-
-- **OpenAI**:
-
-  ```env
-  LLM_PROVIDER=openai
-  OPENAI_API_KEY=sk-xxx...
-  ```
-
-- **Ollama** (fully local - run `ollama pull llama3.2` first):
-
-  ```env
-  LLM_PROVIDER=ollama
-  OLLAMA_MODEL=llama3.2
-  ```
-
-### 3. Launch the UI
-
-```bash
-streamlit run app.py
+```env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-xxxxxxxxx
 ```
 
-Open <http://localhost:8501>, upload a PDF (or paste URLs) in the sidebar,
-then ask questions in the chat.
+### Ollama (Local)
 
-### 4. Or launch the FastAPI backend
+```bash
+ollama pull llama3.2
+```
+
+```env
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=llama3.2
+```
+
+---
+
+## ▶️ Run the Project
+
+### FastAPI Backend
 
 ```bash
 uvicorn api.main:app --reload --port 8000
 ```
 
-Then open:
-
-- **Swagger UI:** <http://localhost:8000/docs>  (interactive try-it-out)
-- **ReDoc:**     <http://localhost:8000/redoc>
-
-#### Endpoints
-
-| Method | Path              | Purpose                                                           |
-| ------ | ----------------- | ----------------------------------------------------------------- |
-| GET    | `/health`         | Liveness probe                                                    |
-| GET    | `/status`         | Vector count, provider, embedding model, RAG hyperparameters      |
-| POST   | `/ingest/files`   | Multipart upload of one or more PDF / TXT / MD / DOCX files       |
-| POST   | `/ingest/urls`    | Body `{"urls": ["https://..."]}` - fetches and ingests each URL   |
-| POST   | `/chat`           | Body `{"question": "...", "history": [{role, content}, ...]}`     |
-| DELETE | `/collection`     | Wipes the vector store                                            |
-
-#### Example `curl` calls
-
-```bash
-# Health
-curl http://localhost:8000/health
-
-# Upload a PDF
-curl -X POST http://localhost:8000/ingest/files \
-     -F "files=@./data/handbook.pdf"
-
-# Ask a question
-curl -X POST http://localhost:8000/chat \
-     -H "Content-Type: application/json" \
-     -d '{"question": "What is RAG?", "history": []}'
+Backend:
+```text
+http://localhost:8000
 ```
 
-The Streamlit UI and the FastAPI backend are **independent** entry points
-that both call the same `src/` core, so you can run either or both at the
-same time on different ports (`8501` and `8000`).
+API Docs:
+- `/docs`
+- `/redoc`
 
-### 5. Or use the CLI
+---
+
+### Custom Frontend UI
+
+Open:
+
+```text
+static/index.html
+```
+
+or run using VS Code Live Server.
+
+---
+
+### Streamlit AI Demo
 
 ```bash
-# Ingest the bundled sample document
-python cli.py ingest --path ./data/sample.md
+streamlit run app.py
+```
 
-# Ingest a folder of PDFs
+Streamlit:
+```text
+http://localhost:8501
+---
+
+# 🧪 Example Workflow
+
+1. Register/Login
+2. Upload PDF/DOCX/TXT documents
+3. Ingest URLs
+4. Ask questions in chat
+5. Retrieve grounded AI responses with citations
+
+# 🔌 API Endpoints
+
+## REST API
+
+| Method   | Endpoint        | Description                                                            |
+|---       |---              |---                                                                     |
+| `GET`    | `/health`       | Backend health check / liveness probe                                  |
+| `GET`    | `/status`       | Returns vector count, embedding model, provider, and RAG configuration |
+| `POST`   | `/register`     | User registration                                                      |
+| `POST`   | `/login`        | JWT-based user authentication                                          |
+| `POST`   | `/ingest/files` | Upload and ingest PDF, DOCX, TXT, Markdown, CSV, or ZIP files          |
+| `POST`   | `/ingest/urls`  | Ingest web URLs into the vector database                               |
+| `POST`   | `/chat`         | Conversational AI chat endpoint                                        |
+| `GET`    | `/history`      | Retrieve user chat history                                             |
+| `DELETE` | `/collection`   | Reset / wipe the vector database collection                            |
+
+---
+## 🔌 API Usage
+
+### Example Requests
+
+```bash
+# Health Check
+curl http://localhost:8000/health
+
+# Upload Documents
+curl -X POST http://localhost:8000/ingest/files \
+-F "files=@./data/handbook.pdf"
+
+# Ingest URLs
+curl -X POST http://localhost:8000/ingest/urls \
+-H "Content-Type: application/json" \
+-d '{"urls":["https://example.com"]}'
+
+# Chat Request
+curl -X POST http://localhost:8000/chat \
+-H "Content-Type: application/json" \
+-d '{"question":"What is RAG?","history":[]}'
+```
+
+---
+
+## ⚡ Multi-Frontend Support
+
+| Interface               | Technology              |
+|---                      |---                      |
+| Enterprise AI Workspace | HTML · CSS · JavaScript |
+| AI Demo Interface       | Streamlit               |
+
+Both frontends connect to the same:
+- FastAPI backend
+- LangChain RAG pipeline
+- ChromaDB vector store
+
+| Service         | Port   |
+|---              |---     |
+| FastAPI Backend | `8000` |
+| Streamlit UI    | `8501` |
+
+---
+
+## 🖥️ CLI Commands
+
+```bash
+# Ingest documents
 python cli.py ingest --path ./data
 
 # Ingest URLs
-python cli.py ingest --url https://en.wikipedia.org/wiki/Retrieval-augmented_generation
+python cli.py ingest --url https://example.com
 
-# Start an interactive chat
+# Interactive chat
 python cli.py chat
 
-# Inspect or wipe the vector store
+# Vector DB status
 python cli.py status
+
+# Reset vector DB
 python cli.py reset
 ```
 
 ---
 
-## Project layout
+# 📂 Project Structure
 
-```
-llm-rag-chatbot/
-├── app.py                     # Streamlit UI                (port 8501)
-├── cli.py                     # Command-line interface
-├── api/                       # FastAPI REST backend         (port 8000)
+```text
+LLM-Powered-RAG-Chatbot/
+│
+├── api/                            # FastAPI backend APIs
 │   ├── __init__.py
-│   ├── main.py                # App + routes
-│   └── schemas.py             # Pydantic request/response models
-├── src/                       # Shared core (used by all 3 entry points)
-│   ├── config.py              # Pydantic settings
-│   ├── document_loader.py     # PDF / TXT / DOCX / URL loaders
-│   ├── text_splitter.py       # Recursive character splitter
-│   ├── embeddings.py          # HuggingFace embeddings factory
-│   ├── vector_store.py        # ChromaDB wrapper
-│   ├── llm.py                 # Multi-provider LLM factory
-│   ├── prompts.py             # System + condense prompts
-│   ├── rag_chain.py           # Conversational RAG pipeline
-│   └── ingest.py              # File/URL → chunks → vector store
-├── tests/
+│   ├── auth.py                     # Authentication routes
+│   ├── chatbot.py                  # Chat APIs
+│   ├── init_db.py                  # Database initialization
+│   └── main.py                     # Main FastAPI app
+│
+├── src/                            # Core RAG logic
+│   ├── __init__.py
+│   ├── auth.py                     # JWT authentication logic
+│   ├── config.py                   # Environment configuration
+│   ├── database.py                 # Database connection
+│   ├── document_loader.py          # PDF/DOCX/TXT/URL loaders
+│   ├── embeddings.py               # Sentence transformer embeddings
+│   ├── ingest.py                   # File & URL ingestion pipeline
+│   ├── llm.py                      # Groq/OpenAI/Ollama LLM setup
+│   ├── models.py                   # Database models
+│   ├── prompts.py                  # Prompt templates
+│   ├── rag_chain.py                # Conversational RAG pipeline
+│   ├── schemas.py                  # Pydantic schemas
+│   ├── text_splitter.py            # Recursive text splitting
+│   └── vector_store.py             # ChromaDB vector store
+│
+├── static/                         # Custom frontend UI
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+│
+├── tests/                          # Unit & integration tests
+│   ├── __init__.py
+│   ├── test_api.py
 │   ├── test_config.py
 │   ├── test_document_loader.py
-│   ├── test_text_splitter.py
-│   └── test_api.py            # FastAPI TestClient tests
+│   └── test_text_splitter.py
+│
+├── data/                           # Uploaded documents
+│
+├── chroma_db/                      # Persistent vector database
+│
+├── chat_db/                        # Chat/session database
+│
+├── app.py                          # Streamlit UI
+├── cli.py                          # CLI interface
+├── worker.py                       # Background worker
 ├── requirements.txt
-├── .env.example
 ├── README.md
-├── data/                      # Drop your documents here
-└── chroma_db/                 # Persistent vector store (auto-created)
+├── .env
+├── .gitignore
+│
+└── chroma.sqlite3                  # Chroma metadata database
 ```
-
 ---
-
 ## How it works
 
-1. **Ingestion.** Files are parsed into LangChain `Document` objects, split
-   into overlapping chunks (default 1000 chars / 200 overlap), embedded with
-   a local sentence-transformer, and persisted in ChromaDB.
-2. **History-aware retrieval.** When a user asks a follow-up like *"and the
-   second one?"*, the chain first rewrites it into a standalone question
-   using the chat history before retrieving.
-3. **Top-K retrieval.** The standalone question is embedded and the K most
-   similar chunks are pulled from Chroma.
-4. **Grounded generation.** Retrieved chunks are injected into a strict
-   system prompt that instructs the LLM to answer **only** from the context
-   and cite the source filename or URL. If the context is insufficient, the
-   model is told to say so explicitly.
-5. **Sources surfaced.** The original retrieved chunks (with metadata such
-   as page numbers) are returned alongside the answer and shown in the UI.
+1. **Document ingestion.** Files and URLs are loaded into LangChain `Document` objects, split into overlapping chunks, embedded using sentence-transformers, and stored in ChromaDB.
+
+2. **History-aware retrieval.** Follow-up questions are rewritten into standalone questions using previous chat history before retrieval.
+
+3. **Semantic search.** The system retrieves the most relevant document chunks from ChromaDB using vector similarity search.
+
+4. **Grounded AI generation.** Retrieved context is injected into a strict prompt that instructs the LLM to answer only from the provided documents and cite sources.
+
+5. **Source attribution.** Retrieved sources, metadata, and page references are returned alongside the generated answer and displayed in the UI.
 
 ---
 
@@ -274,17 +485,73 @@ All hyperparameters live in `.env`:
 
 ---
 
-## Roadmap / ideas
+# 🚀 Roadmap / Future Enhancements
 
-- [ ] Hybrid retrieval (BM25 + dense)
-- [ ] Re-ranking with a cross-encoder
-- [ ] Streaming responses in the Streamlit UI
-- [ ] Per-user collections / multi-tenancy
-- [ ] Dockerfile + `docker compose`
-- [ ] Evaluation harness (Ragas)
+## 🔹 AI & Retrieval Improvements
+- [ ] Hybrid Retrieval (BM25 + Dense Vector Search)
+- [ ] Cross-Encoder Re-ranking
+- [ ] Context Compression & Smart Chunking
+- [ ] Query Expansion & Multi-Query Retrieval
+- [ ] Advanced Prompt Optimization
+- [ ] Evaluation Framework using Ragas
 
 ---
 
-## License
+## 🔹 Conversational AI Enhancements
+- [ ] Streaming AI Responses
+- [ ] Real-Time Typing Indicators
+- [ ] Long-Term Conversational Memory
+- [ ] Multi-Agent AI Workflows
+- [ ] LangGraph Integration
+- [ ] Voice-Based AI Assistant
 
-MIT - feel free to fork, extend, and use in your own portfolio.
+---
+
+## 🔹 Enterprise Features
+- [ ] Multi-Tenant User Collections
+- [ ] Role-Based Access Control (RBAC)
+- [ ] Admin Dashboard & Analytics
+- [ ] User Activity Monitoring
+- [ ] Enterprise Document Permissions
+- [ ] Audit Logging
+
+---
+
+## 🔹 Infrastructure & Scalability
+- [ ] Docker & Docker Compose Deployment
+- [ ] Kubernetes Scaling
+- [ ] Redis Response Caching
+- [ ] Celery Background Workers
+- [ ] Async File Processing
+- [ ] Load Balancing & API Scaling
+
+---
+
+## 🔹 Document Intelligence
+- [ ] OCR Support for Scanned PDFs
+- [ ] Image-Based Document Understanding
+- [ ] Table Extraction & Analysis
+- [ ] Multi-Modal AI Support
+- [ ] Video & Audio Transcript Ingestion
+
+---
+
+## 🔹 Frontend & User Experience
+- [ ] Drag-and-Drop File Uploads
+- [ ] Chat Export & Sharing
+- [ ] Mobile Responsive Workspace
+- [ ] Advanced Search Filters
+- [ ] Dark / Light Theme Toggle
+- [ ] Real-Time Notifications
+---
+# 👨‍💻 Author
+
+## Abhishek Mohan Chavan
+
+- AI & ML Enthusiast
+- Generative AI Developer
+- RAG Systems Developer
+- Full Stack AI Engineer
+
+GitHub:
+https://github.com/ac0628334

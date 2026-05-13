@@ -273,6 +273,9 @@ API Docs:
 - `/docs`
 - `/redoc`
 
+## 📸 Screenshots 
+
+![alt text](<Screenshot 2026-05-13 183012.png>)
 ---
 
 ### Custom Frontend UI
@@ -284,6 +287,18 @@ static/index.html
 ```
 
 or run using VS Code Live Server.
+
+## 📸 Screenshots
+
+### 🔹 Login Interface
+
+![alt text](image.png)
+
+---
+
+### 🔹 Enterprise AI Workspace
+
+![alt text](<Screenshot 2026-05-13 182934.png>)
 
 ---
 
@@ -297,6 +312,8 @@ Streamlit:
 ```text
 http://localhost:8501
 ---
+  ![alt text](<Screenshot 2026-05-13 183112.png>)
+
 
 # 🧪 Example Workflow
 

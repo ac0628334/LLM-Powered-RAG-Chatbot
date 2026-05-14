@@ -220,6 +220,7 @@ def send_email(receiver_email, otp):
 # REDIS
 # ---------------------------------------------------------------------------
 
+
 load_dotenv()
 
 redis_client = None
@@ -229,18 +230,34 @@ async def startup_event():
 
     global redis_client
 
-    url = os.getenv("REDIS_URL")
+    try:
 
-    if not url:
+        url = os.getenv("REDIS_URL")
 
-        raise RuntimeError(
-            "REDIS_URL not set"
+        if not url:
+
+            raise Exception(
+                "REDIS_URL not set"
+            )
+
+        redis_client = redis.from_url(
+
+            url,
+
+            decode_responses=True
         )
 
-    redis_client = redis.from_url(
-        url,
-        decode_responses=True
-    )
+        await redis_client.ping()
+
+        print("✅ Redis connected")
+
+    except Exception as e:
+
+        print("⚠️ Redis unavailable")
+
+        print(e)
+
+        redis_client = None
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -248,7 +265,6 @@ async def shutdown_event():
     if redis_client:
 
         await redis_client.close()
-
 # ---------------------------------------------------------------------------
 # REQUEST MODELS
 # ---------------------------------------------------------------------------
@@ -645,7 +661,11 @@ async def chat_endpoint(
             detail="No documents ingested yet."
         )
 
-    cached_answer = await redis_client.get(
+    cached_answer = None
+
+    if redis_client:
+
+        cached_answer = await redis_client.get(
         payload.question
     )
 
@@ -691,8 +711,9 @@ async def chat_endpoint(
     db.commit()
 
     db.refresh(history)
+    if redis_client:
 
-    await redis_client.set(
+        await redis_client.set(
 
         payload.question,
 
@@ -757,10 +778,16 @@ def reset_endpoint():
 # ---------------------------------------------------------------------------
 # CACHE TEST
 # ---------------------------------------------------------------------------
-
 @app.get("/cache_test")
 
 async def cache_test():
+
+    if not redis_client:
+
+        return {
+
+            "message": "Redis not connected"
+        }
 
     await redis_client.set(
         "foo",

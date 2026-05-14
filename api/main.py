@@ -73,18 +73,15 @@ app = FastAPI(
 
 app.mount(
     "/static",
-    StaticFiles(
-        directory="D:/LLM-RAG-Chatbot-main/LLM-RAG-Chatbot-main/static"
-    ),
+    StaticFiles(directory="static"),
     name="static"
 )
-
 @app.get("/")
 def root():
 
     return FileResponse(
         os.path.join(
-            "D:/LLM-RAG-Chatbot-main/LLM-RAG-Chatbot-main/static",
+            "static",
             "index.html"
         )
     )

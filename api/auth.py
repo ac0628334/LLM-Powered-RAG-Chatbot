@@ -7,7 +7,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 # Secret key & algorithm
-SECRET_KEY = "your-secret-key"   # replace with a strong random key
+SECRET_KEY = "aethermind_super_secure_secret_key_2026"   # replace with a strong random key
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

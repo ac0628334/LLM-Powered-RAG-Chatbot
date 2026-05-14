@@ -1,5 +1,4 @@
-const API = "http://127.0.0.1:8000";
-
+const API = window.location.origin;
 /* ELEMENTS */
 
 const authScreen =
@@ -177,15 +176,16 @@ async function registerUser(){
 
     }else{
 
-      const error =
-      await response.json();
+    const errorText =
+      await response.text();
+
+    console.error(errorText);
 
       alert(
-        error.detail ||
-        "Registration failed"
-      );
-    }
-
+    errorText ||
+    "Registration failed"
+    );
+  }
   }catch(error){
 
     console.error(error);
@@ -234,16 +234,28 @@ async function login(){
       password
     );
 
-    const response =
-    await fetch(`${API}/login`,{
+const response =
+await fetch(`${API}/login`,{
 
-      method:"POST",
+  method:"POST",
 
-      body:formData
-    });
+  body:formData
+});
 
-    const data =
-    await response.json();
+if(!response.ok){
+
+  const errorText =
+  await response.text();
+
+  console.error(errorText);
+
+  alert("Login failed");
+
+  return;
+}
+
+const data =
+await response.json();
 
     const accessToken =
       data.access_token ||

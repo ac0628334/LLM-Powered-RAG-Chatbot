@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 
 import os
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = "aethermind_super_secure_secret_key_2026"   # replace with a strong random key
 
 ALGORITHM = "HS256"
 

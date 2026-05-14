@@ -2,9 +2,12 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-# ⚠️ Change this to a secure random string in production!
-SECRET_KEY = "openssl rand -hex 32"
+import os
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 ALGORITHM = "HS256"
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Password hashing context

@@ -41,6 +41,41 @@ if(token){
   showApp();
 }
 
+/* PROFILE LOAD */
+
+const storedUsername =
+localStorage.getItem("username");
+
+const storedEmail =
+localStorage.getItem("email");
+
+if(storedUsername){
+
+  document
+  .getElementById(
+    "sidebarUsername"
+  )
+  .innerText = storedUsername;
+
+  document
+  .getElementById(
+    "profileAvatar"
+  )
+  .innerText =
+  storedUsername
+  .charAt(0)
+  .toUpperCase();
+}
+
+if(storedEmail){
+
+  document
+  .getElementById(
+    "sidebarEmail"
+  )
+  .innerText = storedEmail;
+}
+
 /* SWITCH TABS */
 
 function switchTab(tab){
@@ -103,6 +138,18 @@ async function registerUser(){
       "regPassword"
     ).value;
 
+    const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{4,}$/;
+
+    if(!passwordRegex.test(password)){
+
+      alert(
+        "Password must contain uppercase, lowercase, number, special character and minimum 4 characters"
+      );
+
+      return;
+    }
+
     const response =
     await fetch(`${API}/register`,{
 
@@ -155,7 +202,7 @@ async function login(){
 
   try{
 
-    const username =
+    const identifier =
     document.getElementById(
       "loginUsername"
     ).value;
@@ -165,10 +212,10 @@ async function login(){
       "loginPassword"
     ).value;
 
-    if(!username || !password){
+    if(!identifier || !password){
 
       alert(
-        "Please enter username and password"
+        "Please enter username/email and password"
       );
 
       return;
@@ -179,7 +226,7 @@ async function login(){
 
     formData.append(
       "username",
-      username
+      identifier
     );
 
     formData.append(
@@ -195,18 +242,8 @@ async function login(){
       body:formData
     });
 
-    console.log(
-      "LOGIN STATUS:",
-      response.status
-    );
-
     const data =
     await response.json();
-
-    console.log(
-      "LOGIN RESPONSE:",
-      data
-    );
 
     const accessToken =
       data.access_token ||
@@ -221,19 +258,34 @@ async function login(){
         accessToken
       );
 
-      // PROFILE
+      localStorage.setItem(
+        "username",
+        data.username
+      );
+
+      localStorage.setItem(
+        "email",
+        data.email
+      );
+
       document
       .getElementById(
         "sidebarUsername"
       )
-      .innerText = username;
+      .innerText = data.username;
+
+      document
+      .getElementById(
+        "sidebarEmail"
+      )
+      .innerText = data.email;
 
       document
       .getElementById(
         "profileAvatar"
       )
       .innerText =
-      username
+      data.username
       .charAt(0)
       .toUpperCase();
 
@@ -244,8 +296,6 @@ async function login(){
       alert(
         "Login failed"
       );
-
-      console.error(data);
     }
 
   }catch(error){
@@ -275,9 +325,9 @@ function showApp(){
 
 function logout(){
 
-  localStorage.removeItem(
-    "token"
-  );
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  localStorage.removeItem("email");
 
   location.reload();
 }
@@ -333,7 +383,7 @@ function startNewChat(){
   `;
 }
 
-/* SAVE SESSION */
+/* SAVE CHAT */
 
 function saveMessageToSession(
   question,
@@ -372,7 +422,7 @@ function saveMessageToSession(
   renderRecentChats();
 }
 
-/* RENDER RECENT */
+/* RECENT CHATS */
 
 function renderRecentChats(){
 
@@ -798,7 +848,7 @@ fileInput.addEventListener(
   }
 );
 
-/* URL INGESTION */
+/* INGEST URLS */
 
 async function ingestUrls(){
 
@@ -862,6 +912,161 @@ async function ingestUrls(){
 
     alert(
       "Backend connection failed"
+    );
+  }
+}
+
+/* FORGOT PASSWORD */
+
+function openForgotPasswordModal(){
+
+  document
+  .getElementById("forgotModal")
+  .classList.remove("hidden");
+}
+
+function closeForgotPasswordModal(){
+
+  document
+  .getElementById("forgotModal")
+  .classList.add("hidden");
+}
+
+/* SEND OTP */
+
+async function sendOTP(){
+
+  try{
+
+    const identifier =
+    document
+    .getElementById(
+      "resetIdentifier"
+    )
+    .value;
+
+    const response =
+    await fetch(`${API}/send-otp`,{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+
+      body:JSON.stringify({
+        identifier
+      })
+    });
+
+    const data =
+    await response.json();
+
+    alert(
+      data.message ||
+      "OTP Sent"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to send OTP"
+    );
+  }
+}
+
+/* RESET PASSWORD */
+
+async function resetPassword(){
+
+  try{
+
+    const identifier =
+    document
+    .getElementById(
+      "resetIdentifier"
+    )
+    .value;
+
+    const otp =
+    document
+    .getElementById(
+      "otpInput"
+    )
+    .value;
+
+    const newPassword =
+    document
+    .getElementById(
+      "newPassword"
+    )
+    .value;
+
+    const confirmPassword =
+    document
+    .getElementById(
+      "confirmPassword"
+    )
+    .value;
+
+    const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{4,}$/;
+
+    if(!passwordRegex.test(newPassword)){
+
+      alert(
+        "Password must contain uppercase, lowercase, number, special character and minimum 4 characters"
+      );
+
+      return;
+    }
+
+    if(newPassword !== confirmPassword){
+
+      alert(
+        "Passwords do not match"
+      );
+
+      return;
+    }
+
+    const response =
+    await fetch(`${API}/reset-password`,{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+
+      body:JSON.stringify({
+
+        identifier,
+        otp,
+        new_password:newPassword
+      })
+    });
+
+    const data =
+    await response.json();
+
+    alert(
+      data.message ||
+      "Password reset successful"
+    );
+
+    closeForgotPasswordModal();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Password reset failed"
     );
   }
 }

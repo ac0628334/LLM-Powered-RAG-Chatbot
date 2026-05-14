@@ -78,9 +78,12 @@ Features:
 
 ### 🔐 Authentication & Security
 - JWT-based authentication
+- Username or email login support
+- Password hashing using bcrypt
+- OTP-based password reset workflow
 - Protected API routes
 - Secure session handling
-- User login & registration system
+- User registration & login system
 
 ---
 
@@ -313,7 +316,17 @@ Streamlit:
 http://localhost:8501
 ---
   
+## ⚡ Redis Caching
 
+Redis is integrated for response caching and performance optimization.
+
+The Redis service runs inside a Docker container during local development.
+
+### Run Redis Container
+
+```bash
+docker run -d --name redis -p 6379:6379 redis
+```
 
 # 🧪 Example Workflow
 
@@ -327,17 +340,19 @@ http://localhost:8501
 
 ## REST API
 
-| Method   | Endpoint        | Description                                                            |
-|---       |---              |---                                                                     |
-| `GET`    | `/health`       | Backend health check / liveness probe                                  |
-| `GET`    | `/status`       | Returns vector count, embedding model, provider, and RAG configuration |
-| `POST`   | `/register`     | User registration                                                      |
-| `POST`   | `/login`        | JWT-based user authentication                                          |
-| `POST`   | `/ingest/files` | Upload and ingest PDF, DOCX, TXT, Markdown, CSV, or ZIP files          |
-| `POST`   | `/ingest/urls`  | Ingest web URLs into the vector database                               |
-| `POST`   | `/chat`         | Conversational AI chat endpoint                                        |
-| `GET`    | `/history`      | Retrieve user chat history                                             |
-| `DELETE` | `/collection`   | Reset / wipe the vector database collection                            |
+| Method   | Endpoint         | Description                                                            |
+|---       |---               |---                                                                     |
+| `GET`    | `/health`        | Backend health check / liveness probe                                  |
+| `GET`    | `/status`        | Returns vector count, embedding model, provider, and RAG configuration |
+| `POST`   | `/register`      | User registration                                                      |
+| `POST`   | `/login`         | JWT-based user authentication                                          |
+| `POST`   | `/ingest/files`  | Upload and ingest PDF, DOCX, TXT, Markdown, CSV, or ZIP files          |
+| `POST`   | `/ingest/urls`   | Ingest web URLs into the vector database                               |
+| `POST`   | `/chat`          | Conversational AI chat endpoint                                        |
+| `GET`    | `/history`       | Retrieve user chat history                                             |
+| `DELETE` | `/collection`    | Reset / wipe the vector database collection                            |
+| `POST`   | `/send-otp`      | Generate OTP for password reset                                        |
+| `POST`   | `/reset-password`| Reset password using OTP                                               |
 
 ---
 ## 🔌 API Usage
@@ -561,6 +576,11 @@ All hyperparameters live in `.env`:
 - [ ] Dark / Light Theme Toggle
 - [ ] Real-Time Notifications
 ---
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![LangChain](https://img.shields.io/badge/LangChain-RAG-black)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 # 👨‍💻 Author
 
 ## Abhishek Mohan Chavan
@@ -572,3 +592,8 @@ All hyperparameters live in `.env`:
 
 GitHub:
 https://github.com/ac0628334
+
+
+## 📄 License
+
+This project is licensed under the MIT License.

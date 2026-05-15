@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
+import redis.asyncio as redis
 
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
@@ -11,7 +12,6 @@ from jose import JWTError, jwt
 
 from datetime import timedelta
 
-import redis.asyncio as redis
 
 import os
 import random

@@ -694,20 +694,45 @@ def ingest_urls_endpoint():
 #         sources=sources
 #     )
 
-@app.post(
-    "/chat",
-    response_model=ChatResponse,
-    tags=["chat"]
+
+from groq import Groq
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
 )
 
-async def chat_endpoint():
+@app.post("/chat")
 
-    return ChatResponse(
+async def chat_endpoint(payload: dict):
 
-        answer="AetherMind AI is successfully deployed on Render Free Tier.",
+    try:
 
-        sources=[]
-    )
+        question = payload.get("question")
+
+        completion = client.chat.completions.create(
+
+            model="llama3-8b-8192",
+
+            messages=[
+                {
+                    "role": "user",
+                    "content": question
+                }
+            ]
+        )
+
+        answer = completion.choices[0].message.content
+
+        return {
+            "answer": answer,
+            "sources": []
+        }
+
+    except Exception as e:
+
+        return {
+            "answer": str(e),
+            "sources": []
+        }
 
 # ---------------------------------------------------------------------------
 # HISTORY

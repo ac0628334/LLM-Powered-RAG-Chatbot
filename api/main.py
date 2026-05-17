@@ -355,7 +355,6 @@ def register(
 # ---------------------------------------------------------------------------
 # LOGIN
 # ---------------------------------------------------------------------------
-
 @app.post("/login")
 
 def login(
@@ -365,51 +364,66 @@ def login(
     db: Session = Depends(get_db)
 ):
 
-    user = db.query(User).filter(
+    try:
 
-    or_(
+        user = db.query(User).filter(
 
-        User.username == form_data.username,
+            or_(
 
-        User.email == form_data.username
+                User.username == form_data.username,
 
-    )
+                User.email == form_data.username
 
-).first()
+            )
 
-    if not user or not verify_password(
+        ).first()
 
-        form_data.password,
+        if not user:
 
-        user.hashed_password
-    ):
+            return {
+                "error": "User not found"
+            }
 
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid credentials"
+        password_valid = verify_password(
+
+            form_data.password,
+
+            user.hashed_password
         )
 
-    access_token_expires = timedelta(
-        minutes=30
-    )
+        if not password_valid:
 
-    access_token = create_access_token(
+            return {
+                "error": "Password mismatch"
+            }
 
-        data={"sub": str(user.id)},
+        access_token_expires = timedelta(
+            minutes=30
+        )
 
-        expires_delta=access_token_expires
-    )
+        access_token = create_access_token(
 
-    return {
+            data={"sub": str(user.id)},
 
-        "access_token": access_token,
+            expires_delta=access_token_expires
+        )
 
-        "token_type": "bearer",
+        return {
 
-        "username": user.username,
+            "access_token": access_token,
 
-        "email": user.email
-    }
+            "token_type": "bearer",
+
+            "username": user.username,
+
+            "email": user.email
+        }
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
+        }
 
 # ---------------------------------------------------------------------------
 # SEND OTP

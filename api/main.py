@@ -43,10 +43,10 @@ from src.vector_store import (
   #  build_chat_history
 # )
 
-from src.ingest import (
-    ingest_uploaded_file,
-    ingest_urls
-)
+# from src.ingest import (
+#     ingest_uploaded_file,
+#     ingest_urls
+# )
 
 from src.schemas import (
     ChatRequest,
@@ -534,63 +534,16 @@ def reset_password(
 @app.post(
     "/ingest/files",
     response_model=IngestResponse,
-    status_code=status.HTTP_201_CREATED,
     tags=["ingest"]
 )
 
-def ingest_files_endpoint(
-
-    files: list[UploadFile] = File(...)
-) -> IngestResponse:
-
-    if not files:
-
-        raise HTTPException(
-
-            status_code=400,
-
-            detail="At least one file is required."
-        )
-
-    total = 0
-
-    items: list[str] = []
-
-    for upload in files:
-
-        try:
-
-            data = upload.file.read()
-
-            added = ingest_uploaded_file(
-                upload.filename,
-                data,
-                "data"
-            )
-
-            total += added
-
-            items.append(upload.filename)
-
-        except Exception as exc:
-
-            logger.exception(
-                "Failed to ingest %s",
-                upload.filename
-            )
-
-            raise HTTPException(
-
-                status_code=500,
-
-                detail=f"Failed to ingest {upload.filename}: {exc}"
-            ) from exc
+def ingest_files_endpoint():
 
     return IngestResponse(
 
-        items=items,
+        items=[],
 
-        chunks_added=total
+        chunks_added=0
     )
 
 # ---------------------------------------------------------------------------
@@ -600,36 +553,17 @@ def ingest_files_endpoint(
 @app.post(
     "/ingest/urls",
     response_model=IngestResponse,
-    status_code=status.HTTP_201_CREATED,
     tags=["ingest"]
 )
 
-def ingest_urls_endpoint(
-    payload: IngestUrlsRequest
-) -> IngestResponse:
-
-    urls = [str(u) for u in payload.urls]
-
-    try:
-
-        added = ingest_urls(urls)
-
-    except Exception as exc:
-
-        logger.exception(
-            "Failed to ingest URLs"
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail=str(exc)
-        ) from exc
+def ingest_urls_endpoint():
 
     return IngestResponse(
-        items=urls,
-        chunks_added=added
-    )
 
+        items=[],
+
+        chunks_added=0
+    )
 # ---------------------------------------------------------------------------
 # CHAT
 # ---------------------------------------------------------------------------
@@ -734,20 +668,7 @@ def ingest_urls_endpoint(
 #     )
 
 
-@app.post(
-    "/chat",
-    response_model=ChatResponse,
-    tags=["chat"]
-)
 
-async def chat_endpoint():
-
-    return ChatResponse(
-
-        answer="AetherMind AI deployed successfully on Render Free Tier.",
-
-        sources=[]
-    )
 # ---------------------------------------------------------------------------
 # HISTORY
 # ---------------------------------------------------------------------------

@@ -694,7 +694,20 @@ def ingest_urls_endpoint():
 #         sources=sources
 #     )
 
+@app.post(
+    "/chat",
+    response_model=ChatResponse,
+    tags=["chat"]
+)
 
+async def chat_endpoint():
+
+    return ChatResponse(
+
+        answer="AetherMind AI is successfully deployed on Render Free Tier.",
+
+        sources=[]
+    )
 
 # ---------------------------------------------------------------------------
 # HISTORY

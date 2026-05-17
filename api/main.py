@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 from dotenv import load_dotenv
 
-from src.database import SessionLocal
+from src.database import SessionLocal, Base, engine
 from src.models import User, ChatHistory
 
 from src.auth import (
@@ -57,6 +57,10 @@ from src.schemas import (
     IngestResponse,
     IngestUrlsRequest
 )
+
+from src.database import SessionLocal, Base, engine
+# Create database tables automatically
+Base.metadata.create_all(bind=engine)
 
 # ---------------------------------------------------------------------------
 # APP SETUP

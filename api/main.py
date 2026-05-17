@@ -38,10 +38,10 @@ from src.vector_store import (
     reset_collection
 )
 
-from src.rag_chain import (
-    RAGChatbot,
-    build_chat_history
-)
+#from src.rag_chain import (  # they were using the commint because of less space in the render to featch the data for free tier 
+ #   RAGChatbot,
+  #  build_chat_history
+# )
 
 from src.ingest import (
     ingest_uploaded_file,
@@ -634,105 +634,120 @@ def ingest_urls_endpoint(
 # CHAT
 # ---------------------------------------------------------------------------
 
+# @app.post(
+#     "/chat",
+#     response_model=ChatResponse,
+#     tags=["chat"]
+# )
+
+# async def chat_endpoint(
+
+#     payload: ChatRequest,
+
+#     bot: RAGChatbot = Depends(RAGChatbot),
+
+#     db: Session = Depends(get_db),
+
+#     current_user: User = Depends(get_current_user)
+# ):
+
+#     if count_documents() == 0:
+
+#         raise HTTPException(
+#             status_code=409,
+#             detail="No documents ingested yet."
+#         )
+
+#     cached_answer = None
+
+#     if redis_client:
+
+#         cached_answer = await redis_client.get(
+#         payload.question
+#     )
+
+#     if cached_answer:
+
+#         return ChatResponse(
+#             answer=cached_answer,
+#             sources=[]
+#         )
+
+#     pairs = [
+
+#         (
+#             msg.content,
+#             payload.history[i+1].content
+#         )
+
+#         for i, msg in enumerate(
+#             payload.history[:-1]
+#         )
+
+#         if msg.role == "user"
+#     ]
+
+#     response = bot.ask(
+
+#         payload.question,
+
+#         chat_history=build_chat_history(pairs)
+#     )
+
+#     history = ChatHistory(
+
+#         user_id=current_user.id,
+
+#         question=payload.question,
+
+#         answer=response.answer
+#     )
+
+#     db.add(history)
+
+#     db.commit()
+
+#     db.refresh(history)
+#     if redis_client:
+
+#         await redis_client.set(
+
+#         payload.question,
+
+#         response.answer,
+
+#         ex=3600
+#     )
+
+#     sources = [
+
+#         Source(**s)
+
+#         for s in response.formatted_sources()
+#     ]
+
+#     return ChatResponse(
+
+#         answer=response.answer,
+
+#         sources=sources
+#     )
+
+
 @app.post(
     "/chat",
     response_model=ChatResponse,
     tags=["chat"]
 )
 
-async def chat_endpoint(
-
-    payload: ChatRequest,
-
-    bot: RAGChatbot = Depends(RAGChatbot),
-
-    db: Session = Depends(get_db),
-
-    current_user: User = Depends(get_current_user)
-):
-
-    if count_documents() == 0:
-
-        raise HTTPException(
-            status_code=409,
-            detail="No documents ingested yet."
-        )
-
-    cached_answer = None
-
-    if redis_client:
-
-        cached_answer = await redis_client.get(
-        payload.question
-    )
-
-    if cached_answer:
-
-        return ChatResponse(
-            answer=cached_answer,
-            sources=[]
-        )
-
-    pairs = [
-
-        (
-            msg.content,
-            payload.history[i+1].content
-        )
-
-        for i, msg in enumerate(
-            payload.history[:-1]
-        )
-
-        if msg.role == "user"
-    ]
-
-    response = bot.ask(
-
-        payload.question,
-
-        chat_history=build_chat_history(pairs)
-    )
-
-    history = ChatHistory(
-
-        user_id=current_user.id,
-
-        question=payload.question,
-
-        answer=response.answer
-    )
-
-    db.add(history)
-
-    db.commit()
-
-    db.refresh(history)
-    if redis_client:
-
-        await redis_client.set(
-
-        payload.question,
-
-        response.answer,
-
-        ex=3600
-    )
-
-    sources = [
-
-        Source(**s)
-
-        for s in response.formatted_sources()
-    ]
+async def chat_endpoint():
 
     return ChatResponse(
 
-        answer=response.answer,
+        answer="AetherMind AI deployed successfully on Render Free Tier.",
 
-        sources=sources
+        sources=[]
     )
-
 # ---------------------------------------------------------------------------
 # HISTORY
 # ---------------------------------------------------------------------------

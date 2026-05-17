@@ -52,7 +52,7 @@ bcrypt
 pymysql
 sqlalchemy
 
-redis>=5.0.0 
+redis
 
 
 fastapi

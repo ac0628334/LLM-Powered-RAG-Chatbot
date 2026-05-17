@@ -299,50 +299,59 @@ def register(
     db: Session = Depends(get_db)
 ):
 
-    existing = db.query(User).filter(
-        User.username == username
-    ).first()
+    try:
 
-    if existing:
+        existing = db.query(User).filter(
+            User.username == username
+        ).first()
 
-        raise HTTPException(
-            status_code=400,
-            detail="Username already exists"
-        )
+        if existing:
 
-    if not validate_password(password):
-
-        raise HTTPException(
-
-            status_code=400,
-
-            detail=(
-                "Password must contain uppercase, lowercase, number, special character and minimum 4 characters"
+            raise HTTPException(
+                status_code=400,
+                detail="Username already exists"
             )
+
+        if not validate_password(password):
+
+            raise HTTPException(
+
+                status_code=400,
+
+                detail=(
+                    "Password must contain uppercase, lowercase, number, special character and minimum 4 characters"
+                )
+            )
+
+        hashed_password = get_password_hash(password)
+
+        user = User(
+
+            username=username,
+
+            email=email,
+
+            hashed_password=hashed_password
         )
 
-    user = User(
+        db.add(user)
 
-        username=username,
+        db.commit()
 
-        email=email,
+        db.refresh(user)
 
-        hashed_password=get_password_hash(password)
-    )
+        return {
 
-    db.add(user)
+            "message":"User registered successfully",
 
-    db.commit()
+            "user_id":user.id
+        }
 
-    db.refresh(user)
+    except Exception as e:
 
-    return {
-
-        "message":"User registered successfully",
-
-        "user_id":user.id
-    }
-
+        return {
+            "error": str(e)
+        }
 # ---------------------------------------------------------------------------
 # LOGIN
 # ---------------------------------------------------------------------------
